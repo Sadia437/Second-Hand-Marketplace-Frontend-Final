@@ -14,8 +14,8 @@ export default function ProductsPage() {
       setLoading(true);
       try {
         const apiUrl = categoryId 
-          ? `http://localhost:5000/api/products?category=${categoryId}` 
-          : 'http://localhost:5000/api/products?limit=50';
+  ? `https://your-backend-live-link/api/products?category=${categoryId}` 
+  : 'https://your-backend-live-link/api/products?limit=50';
           
         const response = await axios.get(apiUrl);
         setProducts(response.data.products || []);

@@ -41,12 +41,11 @@ export function AuthProvider({ children }) {
           const token = localStorage.getItem('access-token');
 
           if (token) {
-            const res = await axios.get(`http://localhost:5000/api/users/profile`, {
-              headers: {
-                Authorization: `Bearer ${token}`
-              }
-            });
-            
+       const res = await axios.get(`https://your-backend-live-link/api/users/profile`, {
+  headers: {
+    Authorization: `Bearer ${token}`
+  }
+});        
             if (res.data) {
               setDbUser(res.data);
             }

@@ -1,0 +1,31 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        primary: '#4F46E5',
+        accent: '#10B981',
+      },
+    },
+  },
+  plugins: [require("daisyui")],
+}
+module.exports = {
+  theme: {
+    extend: {
+      animation: {
+        'typewriter': 'typewriter 3s steps(40) infinite alternate',
+      },
+      keyframes: {
+        typewriter: {
+          '0%': { width: '0%' },
+          '100%': { width: '100%' },
+        },
+      },
+    },
+  },
+}

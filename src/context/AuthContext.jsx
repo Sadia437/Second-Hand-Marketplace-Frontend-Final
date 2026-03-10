@@ -41,11 +41,11 @@ export function AuthProvider({ children }) {
           const token = localStorage.getItem('access-token');
 
           if (token) {
-       const res = await axios.get(`https://your-backend-live-link/api/users/profile`, {
+       const res = await axios.get(`https://second-hand-marketplace-backend-final.onrender.com/api/users/profile`, {
   headers: {
     Authorization: `Bearer ${token}`
   }
-});        
+});    
             if (res.data) {
               setDbUser(res.data);
             }

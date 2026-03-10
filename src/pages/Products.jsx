@@ -14,8 +14,8 @@ export default function ProductsPage() {
       setLoading(true);
       try {
         const apiUrl = categoryId 
-  ? `https://your-backend-live-link/api/products?category=${categoryId}` 
-  : 'https://your-backend-live-link/api/products?limit=50';
+  ? `https://second-hand-marketplace-backend-final.onrender.com/api/products?category=${categoryId}` 
+  : 'https://second-hand-marketplace-backend-final.onrender.com/api/products?limit=50';
           
         const response = await axios.get(apiUrl);
         setProducts(response.data.products || []);

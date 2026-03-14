@@ -10,7 +10,8 @@ import {
 import { auth } from '../firebase/firebase.config';
 import axios from 'axios';
 
-const AuthContext = createContext();
+
+export const AuthContext = createContext(); 
 
 export function useAuth() {
   return useContext(AuthContext);
@@ -21,7 +22,6 @@ export function AuthProvider({ children }) {
   const [dbUser, setDbUser] = useState(null); 
   const [loading, setLoading] = useState(true);
 
-  // Logout function
   const logout = async () => {
     try {
       setDbUser(null);
@@ -35,23 +35,17 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
-      
       if (user?.email) {
         try {
           const token = localStorage.getItem('access-token');
-
           if (token) {
-       const res = await axios.get(`https://second-hand-marketplace-backend-final.onrender.com/api/users/profile`, {
-  headers: {
-    Authorization: `Bearer ${token}`
-  }
-});    
-            if (res.data) {
-              setDbUser(res.data);
-            }
+            const res = await axios.get(`https://second-hand-marketplace-backend-final.onrender.com/api/users/profile`, {
+              headers: { Authorization: `Bearer ${token}` }
+            });    
+            if (res.data) setDbUser(res.data);
           }
         } catch (error) {
-          console.error("Database user fetch error (Check if token is valid):", error);
+          console.error("User fetch error:", error);
           setDbUser(null);
         }
       } else {
@@ -59,7 +53,6 @@ export function AuthProvider({ children }) {
       }
       setLoading(false);
     });
-
     return unsubscribe;
   }, []);
 

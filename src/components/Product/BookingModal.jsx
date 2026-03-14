@@ -115,15 +115,14 @@ function BookingModal({ product, onClose, onSuccess }) {
         sellerName: product.seller?.name
       };
 
-      await API.post('/bookings', bookingData);
+     
+      
       queryClient.invalidateQueries(['buyer-bookings']);
       
       toast.success('Booking request sent successfully!');
       
-      
       setBookingResponse(bookingData);
       setIsSuccess(true);
-      
       
       if (onSuccess) onSuccess(); 
       

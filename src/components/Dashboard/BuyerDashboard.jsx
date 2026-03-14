@@ -1,5 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { Link } from 'react-router-dom'; 
 import API from '../../utils/axiosConfig';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
 
@@ -29,13 +30,13 @@ export default function BuyerDashboard({ user }) {
             <div className="text-6xl mb-4">📦</div>
             <h3 className="text-xl font-semibold mb-2">No orders yet</h3>
             <p className="text-gray-600 mb-4">Start shopping to see your orders here</p>
-            <a href="/products" className="btn btn-primary">Browse Products</a>
+            <Link to="/products" className="btn btn-primary">Browse Products</Link>
           </div>
         </div>
       ) : (
         <div className="grid gap-4">
           {bookings?.map(booking => (
-            <div key={booking._id} className="card bg-base-100 shadow-lg">
+            <div key={booking._id} className="card bg-base-100 shadow-lg border border-gray-100">
               <div className="card-body">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                   <div className="flex items-start gap-4">
@@ -45,8 +46,9 @@ export default function BuyerDashboard({ user }) {
                       className="w-20 h-20 rounded-lg object-cover"
                     />
                     <div>
-                      <h3 className="font-semibold text-lg">{booking.product?.name}</h3>
-                      <p className="text-gray-600">Seller: {booking.seller?.name}</p>
+                      <h3 className="font-semibold text-lg">{booking.productName || booking.product?.name}</h3>
+                      <p className="text-gray-600 font-medium text-primary">Price: ৳{booking.productPrice}</p>
+                      <p className="text-gray-500 text-sm">Seller: {booking.sellerName || booking.seller?.name}</p>
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2">
@@ -57,9 +59,24 @@ export default function BuyerDashboard({ user }) {
                     }`}>
                       {booking.status.toUpperCase()}
                     </span>
-                    <button className="btn btn-primary btn-sm">
-                      {booking.status === 'pending' ? 'Pay Now' : 'View Details'}
-                    </button>
+
+                  
+                    {booking.status === 'pending' ? (
+                      <Link 
+                        to={`/dashboard/payment/${booking._id}`} 
+                        state={{ booking: {
+                          _id: booking._id,
+                          productName: booking.productName || booking.product?.name,
+                          productPrice: booking.productPrice,
+                          userEmail: user?.email,
+                          userName: user?.displayName
+                        }}}
+                      >
+                        <button className="btn btn-primary btn-sm px-6">Pay Now</button>
+                      </Link>
+                    ) : (
+                      <button className="btn btn-ghost btn-sm">View Details</button>
+                    )}
                   </div>
                 </div>
               </div>

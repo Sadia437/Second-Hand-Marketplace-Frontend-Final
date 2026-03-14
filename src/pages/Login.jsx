@@ -17,7 +17,7 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // যদি ইউজার আগে থেকেই লগইন করা থাকে তবে হোম পেজে পাঠিয়ে দাও
+  
   useEffect(() => {
     if (currentUser) {
       navigate('/', { replace: true });
@@ -26,7 +26,7 @@ export default function Login() {
 
   const from = location.state?.from?.pathname || '/';
 
-  // অ্যাকাউন্ট লক চেক (Security feature)
+  // (Security feature)
   useEffect(() => {
     const storedLock = localStorage.getItem('accountLock');
     if (storedLock) {
@@ -57,19 +57,19 @@ export default function Login() {
     
     setLoading(true);
     try {
-      // ১. আপনার কাস্টম মঙ্গোডিবি ব্যাকএন্ডে রিকোয়েস্ট পাঠানো
+      
       const { data } = await API.post('/users/login', {
-        email: formData.email.toLowerCase(),
+        email: formData.email.toLowerCase().trim(),
         password: formData.password
       });
 
       if (data.token) {
-        // টোকেন লোকাল স্টোরেজে সেভ করা
+      
         localStorage.setItem('token', data.token);
         
-        // ২. ফায়ারবেস বা কনটেক্সট লগইন (এটি ক্যাচ ব্লকের ভেতরে রাখা হয়েছে যাতে ফায়ারবেস এরর দিলেও ডাটাবেস লগইন কাজ করে)
+        
         try {
-          await login(formData.email, formData.password);
+          await login(formData.email.toLowerCase().trim(), formData.password);
         } catch (authErr) {
           console.warn("Auth context sync issues:", authErr.message);
         }
@@ -77,11 +77,13 @@ export default function Login() {
         localStorage.removeItem('accountLock');
         toast.success('Welcome back! 🎉');
         
-        // ৩. রোল অনুযায়ী নেভিগেশন (অ্যাডমিন হলে সরাসরি ড্যাশবোর্ড)
-        if (data.role === 'admin') {
-            window.location.href = '/dashboard/admin';
+        
+        if (data.user?.role === 'admin' || data.role === 'admin') {
+            navigate('/dashboard/admin');
+        } else if (data.user?.role === 'seller' || data.role === 'seller') {
+            navigate('/dashboard/seller');
         } else {
-            window.location.href = from;
+            navigate(from, { replace: true });
         }
       }
       
@@ -102,7 +104,7 @@ export default function Login() {
       const user = result.user;
 
       const { data } = await API.post('/users/google-login', {
-        email: user.email,
+        email: user.email.toLowerCase(),
         name: user.displayName,
         googleId: user.uid,
         photoURL: user.photoURL
@@ -110,10 +112,9 @@ export default function Login() {
 
       if (data.token) {
         localStorage.setItem('token', data.token);
+        toast.success('Google login successful! 🎉');
+        navigate('/');
       }
-
-      toast.success('Google login successful! 🎉');
-      window.location.href = '/';
       
     } catch (error) {
       console.error('❌ Google login error:', error);
@@ -135,7 +136,6 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-[#f3f4f6]">
-      {/* Background Blurs */}
       <div className="absolute top-[-5%] right-[-5%] w-[35%] h-[35%] bg-[#2563EB]/10 rounded-full blur-[100px]"></div>
       <div className="absolute bottom-[-5%] left-[-5%] w-[35%] h-[35%] bg-[#2563EB]/15 rounded-full blur-[100px]"></div>
 
@@ -149,11 +149,11 @@ export default function Login() {
             <p className="text-gray-400 mt-2 font-medium">Sign in to your account</p>
           </div>
 
-          {/* Quick Demo Login Buttons */}
           <div className="flex gap-2 justify-center mb-8">
             {['admin', 'seller', 'buyer'].map(role => (
               <button 
                 key={role} 
+                type="button"
                 onClick={() => handleDemoLogin(role)} 
                 className="px-3 py-1 bg-gray-50 text-gray-500 rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-[#2563EB] hover:text-white transition-all duration-200 border border-gray-100"
               >
@@ -198,6 +198,7 @@ export default function Login() {
           </div>
 
           <button 
+            type="button"
             onClick={handleGoogleLogin} 
             disabled={loading}
             className="w-full py-4 border border-gray-200 rounded-xl flex items-center justify-center space-x-3 hover:bg-gray-50 transition-all active:scale-[0.98]"

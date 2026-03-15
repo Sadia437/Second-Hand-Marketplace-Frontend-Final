@@ -28,12 +28,10 @@ function App() {
           <Route path="/products" element={<Products />} />
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/blog" element={<Blog />} />
-          
-          {/* Dashboard nested routing */}
           <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>}>
             <Route path="my-bookings" element={<MyBookings />} />
             <Route path="payment/:id" element={<Payment />} />
-            <Route path="admin-sellers" element={<AdminDashboard />} />
+            <Route path="admin" element={<AdminDashboard />} /> 
           </Route>
 
           <Route path="*" element={<NotFound />} />
